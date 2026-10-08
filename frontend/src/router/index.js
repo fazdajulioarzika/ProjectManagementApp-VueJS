@@ -1,19 +1,38 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import AuthLayout from "@/layouts/AuthLayout.vue";
+import DashboardLayout from "@/layouts/DashboardLayout.vue";
 
 const routes = [
   { path: "/", redirect: "/dashboard" },
   {
-    path: "/login",
-    name: "login",
-    component: () => import("@/views/auth/LoginView.vue"),
+    path: "/",
+    component: AuthLayout,
     meta: { guestOnly: true },
+    children: [
+      {
+        path: "/login",
+        name: "login",
+        component: () => import("@/views/auth/LoginView.vue"),
+      },
+      {
+        path: "/register",
+        name: "register",
+        component: () => import("@/views/auth/RegisterView.vue"),
+      },
+    ],
   },
   {
-    path: "/dashboard",
-    name: "dashboard",
-    component: () => import("@/views/dashboard/DashboardView.vue"),
+    path: "/",
+    component: DashboardLayout,
     meta: { requiresAuth: true },
+    children: [
+      {
+        path: "/dashboard",
+        name: "dashboard",
+        component: () => import("@/views/dashboard/DashboardView.vue"),
+      },
+    ],
   },
   { path: "/:pathMatch(.*)*", redirect: "/dashboard" },
 ];
@@ -26,7 +45,6 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const auth = useAuthStore();
 
-  // Refresh halaman: ada token tapi data user belum dimuat
   if (auth.token && !auth.user) await auth.fetchMe();
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {

@@ -1,24 +1,30 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import BaseInput from "@/components/ui/BaseInput.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 
 const auth = useAuthStore();
 const router = useRouter();
-const route = useRoute();
 
-const form = ref({ email: "", password: "" });
+const form = ref({ name: "", email: "", password: "", confirmPassword: "" });
 const error = ref("");
 const loading = ref(false);
 
 async function submit() {
   error.value = "";
+
+  if (form.value.password !== form.value.confirmPassword) {
+    error.value = "Konfirmasi password tidak sama";
+    return;
+  }
+
   loading.value = true;
   try {
-    await auth.login(form.value);
-    router.push(route.query.redirect || "/dashboard");
+    const { name, email, password } = form.value;
+    await auth.register({ name, email, password });
+    router.push("/dashboard");
   } catch (e) {
     error.value = e.message;
   } finally {
@@ -28,9 +34,16 @@ async function submit() {
 </script>
 
 <template>
-  <h2 class="mb-6 text-xl font-semibold text-gray-900">Masuk ke akun Anda</h2>
+  <h2 class="mb-6 text-xl font-semibold text-gray-900">Buat akun baru</h2>
 
   <form class="space-y-4" @submit.prevent="submit">
+    <BaseInput
+      v-model="form.name"
+      label="Nama"
+      placeholder="Nama lengkap"
+      autocomplete="name"
+      required
+    />
     <BaseInput
       v-model="form.email"
       label="Email"
@@ -43,8 +56,15 @@ async function submit() {
       v-model="form.password"
       label="Password"
       type="password"
-      placeholder="••••••"
-      autocomplete="current-password"
+      placeholder="Minimal 6 karakter"
+      autocomplete="new-password"
+      required
+    />
+    <BaseInput
+      v-model="form.confirmPassword"
+      label="Konfirmasi Password"
+      type="password"
+      autocomplete="new-password"
       required
     />
 
@@ -53,16 +73,14 @@ async function submit() {
     </p>
 
     <BaseButton type="submit" :loading="loading" class="w-full">
-      {{ loading ? "Memproses..." : "Masuk" }}
+      {{ loading ? "Memproses..." : "Daftar" }}
     </BaseButton>
   </form>
 
   <p class="mt-6 text-center text-sm text-gray-500">
-    Belum punya akun?
-    <RouterLink
-      to="/register"
-      class="font-medium text-indigo-600 hover:underline"
-      >Daftar</RouterLink
+    Sudah punya akun?
+    <RouterLink to="/login" class="font-medium text-indigo-600 hover:underline"
+      >Masuk</RouterLink
     >
   </p>
 </template>
