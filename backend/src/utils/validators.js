@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 
 const PROJECT_STATUS = ["planning", "active", "completed", "archived"];
 const TASK_STATUS = ["todo", "in_progress", "review", "done"];
@@ -70,4 +70,24 @@ export const taskStatusRules = [
   body("status")
     .isIn(TASK_STATUS)
     .withMessage(`Status ${oneOf(TASK_STATUS)}`),
+];
+export const memberAddRules = [
+  body("user").isMongoId().withMessage("User tidak valid"),
+  body("title")
+    .optional()
+    .trim()
+    .isLength({ max: 50 })
+    .withMessage("Jabatan maksimal 50 karakter"),
+];
+
+export const memberRemoveRules = [
+  param("userId").isMongoId().withMessage("ID user tidak valid"),
+];
+export const commentRules = [
+  body("content")
+    .trim()
+    .notEmpty()
+    .withMessage("Komentar tidak boleh kosong")
+    .isLength({ max: 1000 })
+    .withMessage("Komentar maksimal 1000 karakter"),
 ];

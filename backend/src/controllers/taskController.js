@@ -1,8 +1,10 @@
 import Task from "../models/Task.js";
+import Comment from "../models/Comment.js";
 import AppError from "../utils/AppError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { canManageProject, sameId } from "../utils/access.js";
 import { getProjectOrFail } from "../services/projectService.js";
+import { logActivity } from "../services/activityService.js";
 
 const POPULATE = [
   { path: "assignee", select: "name email avatar" },
@@ -15,7 +17,6 @@ const assertAssigneeIsMember = (project, assignee) => {
   }
 };
 
-// Ambil task + project + hak akses user terhadap task tersebut
 const loadTaskWithAccess = async (req) => {
   const task = await Task.findById(req.params.id);
   if (!task) throw new AppError("Task tidak ditemukan", 404);
@@ -26,6 +27,15 @@ const loadTaskWithAccess = async (req) => {
 
   return { task, project, manager, isAssignee };
 };
+
+const logStatusChange = (user, task, from) =>
+  logActivity({
+    project: task.project,
+    user: user._id,
+    action: task.status === "done" ? "task.completed" : "task.moved",
+    target: task.title,
+    metadata: { from, to: task.status },
+  });
 
 export const getTasks = asyncHandler(async (req, res) => {
   const project = await getProjectOrFail(req.params.projectId, req.user);
@@ -60,6 +70,22 @@ export const createTask = asyncHandler(async (req, res) => {
   });
   await task.populate(POPULATE);
 
+  await logActivity({
+    project: project._id,
+    user: req.user._id,
+    action: "task.created",
+    target: task.title,
+  });
+  if (task.assignee) {
+    await logActivity({
+      project: project._id,
+      user: req.user._id,
+      action: "task.assigned",
+      target: task.title,
+      metadata: { assignee: task.assignee.name },
+    });
+  }
+
   res.status(201).json({ success: true, data: { task } });
 });
 
@@ -81,7 +107,6 @@ export const updateTask = asyncHandler(async (req, res) => {
     );
   }
 
-  // manager: semua field, assignee biasa: hanya description & status
   const allowed = manager
     ? ["title", "description", "priority", "status", "assignee", "dueDate"]
     : ["description", "status"];
@@ -89,16 +114,32 @@ export const updateTask = asyncHandler(async (req, res) => {
   if (manager && req.body.assignee)
     assertAssigneeIsMember(project, req.body.assignee);
 
+  const prevStatus = task.status;
+  const prevAssignee = String(task.assignee ?? "");
+
   allowed.forEach((key) => {
     if (req.body[key] !== undefined) task[key] = req.body[key];
   });
   await task.save();
+
+  const assigneeChanged = String(task.assignee ?? "") !== prevAssignee;
   await task.populate(POPULATE);
+
+  if (task.status !== prevStatus)
+    await logStatusChange(req.user, task, prevStatus);
+  if (assigneeChanged && task.assignee) {
+    await logActivity({
+      project: task.project,
+      user: req.user._id,
+      action: "task.assigned",
+      target: task.title,
+      metadata: { assignee: task.assignee.name },
+    });
+  }
 
   res.json({ success: true, data: { task } });
 });
 
-// Dipakai Kanban saat drag & drop
 export const updateTaskStatus = asyncHandler(async (req, res) => {
   const { task, manager, isAssignee } = await loadTaskWithAccess(req);
   if (!manager && !isAssignee) {
@@ -108,9 +149,13 @@ export const updateTaskStatus = asyncHandler(async (req, res) => {
     );
   }
 
+  const prevStatus = task.status;
   task.status = req.body.status;
   await task.save();
   await task.populate(POPULATE);
+
+  if (task.status !== prevStatus)
+    await logStatusChange(req.user, task, prevStatus);
 
   res.json({ success: true, data: { task } });
 });
@@ -119,6 +164,15 @@ export const deleteTask = asyncHandler(async (req, res) => {
   const { task, manager } = await loadTaskWithAccess(req);
   if (!manager) throw new AppError("Anda tidak boleh menghapus task ini", 403);
 
+  await Comment.deleteMany({ task: task._id });
   await task.deleteOne();
+
+  await logActivity({
+    project: task.project,
+    user: req.user._id,
+    action: "task.deleted",
+    target: task.title,
+  });
+
   res.json({ success: true, message: "Task berhasil dihapus" });
 });

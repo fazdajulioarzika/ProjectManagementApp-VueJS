@@ -14,7 +14,11 @@ export const getDashboard = asyncHandler(async (req, res) => {
     .select("name status")
     .sort("-updatedAt");
   const projectIds = projects.map((p) => p._id);
-  const taskFilter = { project: { $in: projectIds } };
+  const isMember = req.user.role === "member";
+  const taskFilter = {
+    project: { $in: projectIds },
+    ...(isMember && { assignee: req.user._id }),
+  };
 
   const [totalTasks, completed, overdue, recentTasks, progressMap] =
     await Promise.all([
@@ -46,6 +50,7 @@ export const getDashboard = asyncHandler(async (req, res) => {
   res.json({
     success: true,
     data: {
+      scope: isMember ? "mine" : "all",
       stats: { totalProjects: projects.length, totalTasks, completed, overdue },
       projectProgress,
       recentTasks,

@@ -28,6 +28,7 @@ const tabs = [
   { label: "Board", name: "project-board" },
   { label: "Tasks", name: "project-tasks" },
   { label: "Members", name: "project-members" },
+  { label: "Activity", name: "project-activity" },
 ];
 
 // Daftar anggota project, dipakai untuk pilihan assignee

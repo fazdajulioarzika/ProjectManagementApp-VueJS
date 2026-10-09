@@ -61,6 +61,11 @@ const routes = [
             name: "project-members",
             component: () => import("@/views/projects/ProjectMembersView.vue"),
           },
+          {
+            path: "activity",
+            name: "project-activity",
+            component: () => import("@/views/projects/ProjectActivityView.vue"),
+          },
         ],
       },
       {

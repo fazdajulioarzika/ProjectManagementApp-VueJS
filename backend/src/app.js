@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
+
+app.use("/api/comments", commentRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

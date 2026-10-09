@@ -9,6 +9,7 @@ import BaseInput from "@/components/ui/BaseInput.vue";
 import BaseSelect from "@/components/ui/BaseSelect.vue";
 import BaseTextarea from "@/components/ui/BaseTextarea.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
+import TaskComments from "./TaskComments.vue";
 
 const props = defineProps({
   open: Boolean,
@@ -189,5 +190,6 @@ async function remove() {
         </div>
       </div>
     </form>
+    <TaskComments v-if="isEdit" :task-id="task._id" />
   </BaseModal>
 </template>

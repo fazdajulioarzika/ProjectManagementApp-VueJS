@@ -5,9 +5,17 @@ import {
   updateTaskStatus,
   deleteTask,
 } from "../controllers/taskController.js";
+import {
+  getComments,
+  createComment,
+} from "../controllers/commentController.js";
 import { protect } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { taskUpdateRules, taskStatusRules } from "../utils/validators.js";
+import {
+  taskUpdateRules,
+  taskStatusRules,
+  commentRules,
+} from "../utils/validators.js";
 
 const router = Router();
 router.use(protect);
@@ -19,5 +27,10 @@ router
   .delete(deleteTask);
 
 router.patch("/:id/status", taskStatusRules, validate, updateTaskStatus);
+
+router
+  .route("/:taskId/comments")
+  .get(getComments)
+  .post(commentRules, validate, createComment);
 
 export default router;

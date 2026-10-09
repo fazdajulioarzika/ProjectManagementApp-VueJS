@@ -37,3 +37,34 @@ export const logout = (req, res) => {
 export const getMe = (req, res) => {
   res.json({ success: true, data: { user: req.user } });
 };
+export const updateProfile = asyncHandler(async (req, res) => {
+  const { name, avatar } = req.body;
+
+  // Hanya name dan avatar yang boleh diubah. Role dan email sengaja tidak disentuh.
+  if (name !== undefined) req.user.name = name;
+  if (avatar !== undefined) req.user.avatar = avatar;
+  await req.user.save();
+
+  res.json({ success: true, data: { user: req.user } });
+});
+
+export const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  const user = await User.findById(req.user._id).select("+password");
+  if (!(await user.comparePassword(currentPassword))) {
+    // 400, bukan 401: interceptor frontend akan menganggap 401 sebagai token kedaluwarsa dan memaksa logout
+    throw new AppError("Password saat ini salah", 400);
+  }
+  if (currentPassword === newPassword) {
+    throw new AppError(
+      "Password baru harus berbeda dari password saat ini",
+      400
+    );
+  }
+
+  user.password = newPassword; // di-hash otomatis oleh hook pre('save')
+  await user.save();
+
+  res.json({ success: true, message: "Password berhasil diubah" });
+});
