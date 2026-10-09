@@ -10,7 +10,7 @@ import { logActivity } from "../services/activityService.js";
 import { notifyAssigned } from "../services/notificationService.js";
 
 const POPULATE = [
-  { path: "assignee", select: "name email avatar" },
+  { path: "assignee", select: "name email" },
   { path: "createdBy", select: "name" },
 ];
 
