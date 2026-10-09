@@ -13,7 +13,7 @@ defineEmits(["close"]);
 
 const items = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
-  { label: "Projects", icon: FolderKanban, soon: true },
+  { label: "Projects", to: "/projects", icon: FolderKanban },
   { label: "Tasks", icon: ListChecks, soon: true },
   { label: "Members", icon: Users, soon: true },
   { label: "Settings", icon: Settings, soon: true },

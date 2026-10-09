@@ -11,3 +11,12 @@ export const TASK_PRIORITY = {
   high: { label: "High", class: "bg-orange-100 text-orange-700" },
   urgent: { label: "Urgent", class: "bg-red-100 text-red-700" },
 };
+export const PROJECT_STATUS = {
+  planning: { label: "Planning", class: "bg-slate-100 text-slate-700" },
+  active: { label: "Active", class: "bg-indigo-100 text-indigo-700" },
+  completed: { label: "Completed", class: "bg-green-100 text-green-700" },
+  archived: { label: "Archived", class: "bg-gray-200 text-gray-600" },
+};
+
+export const toOptions = (map) =>
+  Object.entries(map).map(([value, v]) => ({ value, label: v.label }));

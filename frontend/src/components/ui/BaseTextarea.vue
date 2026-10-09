@@ -1,11 +1,9 @@
 <script setup>
 defineProps({
-  modelValue: [String, Number],
+  modelValue: String,
   label: String,
-  type: { type: String, default: "text" },
   placeholder: String,
-  autocomplete: String,
-  required: Boolean,
+  rows: { type: Number, default: 3 },
   disabled: Boolean,
 });
 defineEmits(["update:modelValue"]);
@@ -16,12 +14,10 @@ defineEmits(["update:modelValue"]);
     <span v-if="label" class="mb-1 block text-sm font-medium text-gray-700">{{
       label
     }}</span>
-    <input
-      :type="type"
+    <textarea
       :value="modelValue"
+      :rows="rows"
       :placeholder="placeholder"
-      :autocomplete="autocomplete"
-      :required="required"
       :disabled="disabled"
       class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:bg-gray-100 disabled:text-gray-500"
       @input="$emit('update:modelValue', $event.target.value)"

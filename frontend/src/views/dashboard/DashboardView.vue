@@ -13,6 +13,7 @@ const auth = useAuthStore();
 const data = ref(null);
 const loading = ref(true);
 const error = ref("");
+const mine = computed(() => data.value?.scope === "mine");
 
 const firstName = computed(() => auth.user?.name?.split(" ")[0]);
 
@@ -55,19 +56,19 @@ onMounted(async () => {
           :icon="FolderKanban"
         />
         <StatCard
-          label="Total Tasks"
+          :label="mine ? 'Tugas Saya' : 'Total Tasks'"
           :value="data.stats.totalTasks"
           :icon="ListChecks"
           tone="bg-sky-100 text-sky-600"
         />
         <StatCard
-          label="Completed"
+          :label="mine ? 'Tugas Saya Selesai' : 'Completed'"
           :value="data.stats.completed"
           :icon="CheckCheck"
           tone="bg-green-100 text-green-600"
         />
         <StatCard
-          label="Overdue"
+          :label="mine ? 'Tugas Saya Overdue' : 'Overdue'"
           :value="data.stats.overdue"
           :icon="Clock"
           tone="bg-red-100 text-red-600"

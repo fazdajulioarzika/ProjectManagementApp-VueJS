@@ -32,6 +32,37 @@ const routes = [
         name: "dashboard",
         component: () => import("@/views/dashboard/DashboardView.vue"),
       },
+      {
+        path: "/projects",
+        name: "projects",
+        component: () => import("@/views/projects/ProjectsView.vue"),
+      },
+      {
+        path: "/projects/:id",
+        component: () => import("@/views/projects/ProjectDetailView.vue"),
+        children: [
+          {
+            path: "",
+            name: "project-overview",
+            component: () => import("@/views/projects/ProjectOverviewView.vue"),
+          },
+          {
+            path: "board",
+            name: "project-board",
+            component: () => import("@/views/projects/ProjectBoardView.vue"),
+          },
+          {
+            path: "tasks",
+            name: "project-tasks",
+            component: () => import("@/views/projects/ProjectTasksView.vue"),
+          },
+          {
+            path: "members",
+            name: "project-members",
+            component: () => import("@/views/projects/ProjectMembersView.vue"),
+          },
+        ],
+      },
     ],
   },
   { path: "/:pathMatch(.*)*", redirect: "/dashboard" },
