@@ -6,4 +6,7 @@ export default {
   login: (payload) => api.post("/auth/login", payload).then((r) => r.data.data),
   logout: () => api.post("/auth/logout"),
   me: () => api.get("/auth/me").then((r) => r.data.data.user),
+  updateProfile: (payload) =>
+    api.put("/auth/profile", payload).then((r) => r.data.data.user),
+  changePassword: (payload) => api.put("/auth/password", payload),
 };

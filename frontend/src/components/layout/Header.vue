@@ -1,15 +1,13 @@
 <script setup>
-import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { Menu, LogOut } from "lucide-vue-next";
 import { useAuthStore } from "@/stores/auth";
+import UserAvatar from "@/components/ui/UserAvatar.vue";
 
 defineEmits(["toggle-sidebar"]);
 
 const auth = useAuthStore();
 const router = useRouter();
-
-const initial = computed(() => auth.user?.name?.charAt(0).toUpperCase() ?? "?");
 
 async function logout() {
   await auth.logout();
@@ -30,15 +28,16 @@ async function logout() {
     <div class="hidden lg:block" />
 
     <div class="flex items-center gap-3">
-      <div
-        class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white"
+      <RouterLink
+        to="/profile"
+        class="flex items-center gap-3 rounded-lg px-2 py-1 hover:bg-gray-50"
       >
-        {{ initial }}
-      </div>
-      <div class="hidden text-sm leading-tight sm:block">
-        <p class="font-medium text-gray-900">{{ auth.user?.name }}</p>
-        <p class="capitalize text-gray-500">{{ auth.user?.role }}</p>
-      </div>
+        <UserAvatar :name="auth.user?.name" :avatar="auth.user?.avatar" />
+        <div class="hidden text-sm leading-tight sm:block">
+          <p class="font-medium text-gray-900">{{ auth.user?.name }}</p>
+          <p class="capitalize text-gray-500">{{ auth.user?.role }}</p>
+        </div>
+      </RouterLink>
       <button
         class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
         title="Logout"

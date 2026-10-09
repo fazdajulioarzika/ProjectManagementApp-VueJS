@@ -63,6 +63,16 @@ const routes = [
           },
         ],
       },
+      {
+        path: "/profile",
+        name: "profile",
+        component: () => import("@/views/profile/ProfileView.vue"),
+      },
+      {
+        path: "/settings",
+        name: "settings",
+        component: () => import("@/views/profile/SettingsView.vue"),
+      },
     ],
   },
   { path: "/:pathMatch(.*)*", redirect: "/dashboard" },

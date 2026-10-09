@@ -50,6 +50,14 @@ export const useAuthStore = defineStore("auth", () => {
     clearSession();
   }
 
+  async function updateProfile(payload) {
+    user.value = await authService.updateProfile(payload);
+  }
+
+  async function changePassword(payload) {
+    await authService.changePassword(payload);
+  }
+
   return {
     token,
     user,
@@ -60,5 +68,7 @@ export const useAuthStore = defineStore("auth", () => {
     register,
     fetchMe,
     logout,
+    updateProfile,
+    changePassword,
   };
 });

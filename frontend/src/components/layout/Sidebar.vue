@@ -16,7 +16,7 @@ const items = [
   { label: "Projects", to: "/projects", icon: FolderKanban },
   { label: "Tasks", icon: ListChecks, soon: true },
   { label: "Members", icon: Users, soon: true },
-  { label: "Settings", icon: Settings, soon: true },
+  { label: "Settings", to: "/settings", icon: Settings },
 ];
 </script>
 
