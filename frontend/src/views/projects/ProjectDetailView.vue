@@ -41,6 +41,21 @@ provide("taskModal", {
   openCreate: () => (taskModal.value = { open: true, task: null }),
   openEdit: (task) => (taskModal.value = { open: true, task }),
 });
+// Membuka modal task jika URL membawa ?task=<id> (dari notifikasi / halaman Tasks)
+function openTaskFromQuery() {
+  const id = route.query.task;
+  if (!id) return;
+  const task = taskStore.tasks.find((t) => t._id === id);
+  if (task) taskModal.value = { open: true, task };
+  router.replace({ query: { ...route.query, task: undefined } });
+}
+
+watch(
+  () => route.query.task,
+  () => {
+    if (!loading.value) openTaskFromQuery();
+  }
+);
 
 async function load(id) {
   loading.value = true;
@@ -52,6 +67,7 @@ async function load(id) {
       projectStore.fetchOne(id),
       taskStore.fetchByProject(id),
     ]);
+    openTaskFromQuery();
   } catch (e) {
     error.value = e.message;
   } finally {

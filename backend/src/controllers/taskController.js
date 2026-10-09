@@ -1,10 +1,13 @@
 import Task from "../models/Task.js";
+import Project from "../models/Project.js";
 import Comment from "../models/Comment.js";
+import Notification from "../models/Notification.js";
 import AppError from "../utils/AppError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { canManageProject, sameId } from "../utils/access.js";
 import { getProjectOrFail } from "../services/projectService.js";
 import { logActivity } from "../services/activityService.js";
+import { notifyAssigned } from "../services/notificationService.js";
 
 const POPULATE = [
   { path: "assignee", select: "name email avatar" },
@@ -36,6 +39,22 @@ const logStatusChange = (user, task, from) =>
     target: task.title,
     metadata: { from, to: task.status },
   });
+
+// Semua task dari project yang diikuti user (admin: semua project)
+export const listTasks = asyncHandler(async (req, res) => {
+  const projectFilter =
+    req.user.role === "admin"
+      ? {}
+      : { $or: [{ owner: req.user._id }, { "members.user": req.user._id }] };
+  const projectIds = await Project.distinct("_id", projectFilter);
+
+  const tasks = await Task.find({ project: { $in: projectIds } })
+    .populate([...POPULATE, { path: "project", select: "name" }])
+    .sort("-updatedAt")
+    .limit(500);
+
+  res.json({ success: true, count: tasks.length, data: { tasks } });
+});
 
 export const getTasks = asyncHandler(async (req, res) => {
   const project = await getProjectOrFail(req.params.projectId, req.user);
@@ -84,6 +103,7 @@ export const createTask = asyncHandler(async (req, res) => {
       target: task.title,
       metadata: { assignee: task.assignee.name },
     });
+    await notifyAssigned({ task, actor: req.user });
   }
 
   res.status(201).json({ success: true, data: { task } });
@@ -135,6 +155,7 @@ export const updateTask = asyncHandler(async (req, res) => {
       target: task.title,
       metadata: { assignee: task.assignee.name },
     });
+    await notifyAssigned({ task, actor: req.user });
   }
 
   res.json({ success: true, data: { task } });
@@ -165,6 +186,7 @@ export const deleteTask = asyncHandler(async (req, res) => {
   if (!manager) throw new AppError("Anda tidak boleh menghapus task ini", 403);
 
   await Comment.deleteMany({ task: task._id });
+  await Notification.deleteMany({ task: task._id });
   await task.deleteOne();
 
   await logActivity({

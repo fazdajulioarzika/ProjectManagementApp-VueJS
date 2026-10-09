@@ -1,10 +1,13 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { Plus } from "lucide-vue-next";
 import { useAuthStore } from "@/stores/auth";
 import { useProjectStore } from "@/stores/project";
+import { PROJECT_STATUS, toOptions } from "@/utils/constants";
 import BaseButton from "@/components/ui/BaseButton.vue";
+import BaseInput from "@/components/ui/BaseInput.vue";
+import BaseSelect from "@/components/ui/BaseSelect.vue";
 import ProjectCard from "@/components/project/ProjectCard.vue";
 import ProjectFormModal from "@/components/project/ProjectFormModal.vue";
 
@@ -14,6 +17,22 @@ const router = useRouter();
 
 const showForm = ref(false);
 const error = ref("");
+const search = ref("");
+const status = ref("");
+
+const statusOptions = [
+  { value: "", label: "Semua status" },
+  ...toOptions(PROJECT_STATUS),
+];
+
+const filtered = computed(() => {
+  const q = search.value.trim().toLowerCase();
+  return store.projects.filter(
+    (p) =>
+      (!q || p.name.toLowerCase().includes(q)) &&
+      (!status.value || p.status === status.value)
+  );
+});
 
 onMounted(async () => {
   try {
@@ -40,6 +59,13 @@ function onCreated(project) {
       </BaseButton>
     </div>
 
+    <div v-if="store.projects.length" class="grid gap-3 sm:grid-cols-3">
+      <div class="sm:col-span-2">
+        <BaseInput v-model="search" placeholder="Cari project..." />
+      </div>
+      <BaseSelect v-model="status" :options="statusOptions" />
+    </div>
+
     <p v-if="store.loading" class="text-gray-500">Memuat project...</p>
     <p
       v-else-if="error"
@@ -58,8 +84,15 @@ function onCreated(project) {
       >
     </div>
 
+    <div
+      v-else-if="!filtered.length"
+      class="rounded-xl border border-dashed border-gray-300 p-10 text-center text-gray-500"
+    >
+      Tidak ada project yang cocok dengan pencarian.
+    </div>
+
     <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <ProjectCard v-for="p in store.projects" :key="p._id" :project="p" />
+      <ProjectCard v-for="p in filtered" :key="p._id" :project="p" />
     </div>
 
     <ProjectFormModal

@@ -78,6 +78,22 @@ const routes = [
         name: "settings",
         component: () => import("@/views/profile/SettingsView.vue"),
       },
+      {
+        path: "/tasks",
+        name: "tasks",
+        component: () => import("@/views/tasks/TasksView.vue"),
+      },
+      {
+        path: "/members",
+        name: "members",
+        component: () => import("@/views/members/MembersView.vue"),
+        meta: { roles: ["admin", "manager"] },
+      },
+      {
+        path: "/notifications",
+        name: "notifications",
+        component: () => import("@/views/notifications/NotificationsView.vue"),
+      },
     ],
   },
   { path: "/:pathMatch(.*)*", redirect: "/dashboard" },
@@ -95,6 +111,9 @@ router.beforeEach(async (to) => {
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
     return { name: "login", query: { redirect: to.fullPath } };
+  }
+  if (to.meta.roles && !to.meta.roles.includes(auth.user?.role)) {
+    return { name: "dashboard" };
   }
   if (to.meta.guestOnly && auth.isAuthenticated) {
     return { name: "dashboard" };

@@ -16,9 +16,12 @@ import {
   taskStatusRules,
   commentRules,
 } from "../utils/validators.js";
+import { listTasks } from "../controllers/taskController.js";
 
 const router = Router();
 router.use(protect);
+
+router.get("/", listTasks);
 
 router
   .route("/:id")

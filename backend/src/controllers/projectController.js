@@ -13,6 +13,7 @@ import {
   normalizeMembers,
 } from "../services/projectService.js";
 import { logActivity } from "../services/activityService.js";
+import Notification from "../models/Notification.js";
 
 const USER_FIELDS = "name email avatar";
 
@@ -104,6 +105,7 @@ export const deleteProject = asyncHandler(async (req, res) => {
   await Comment.deleteMany({ task: { $in: taskIds } });
   await Task.deleteMany({ project: project._id });
   await Activity.deleteMany({ project: project._id });
+  await Notification.deleteMany({ project: project._id });
   await project.deleteOne();
 
   res.json({ success: true, message: "Project berhasil dihapus" });

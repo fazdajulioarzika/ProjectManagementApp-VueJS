@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import authService from "@/services/auth";
+import { useNotificationStore } from "./notification";
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref(localStorage.getItem("token"));
@@ -22,6 +23,7 @@ export const useAuthStore = defineStore("auth", () => {
     token.value = null;
     user.value = null;
     localStorage.removeItem("token");
+    useNotificationStore().reset();
   }
 
   async function login(credentials) {

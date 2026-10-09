@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import {
   LayoutDashboard,
   FolderKanban,
@@ -7,17 +8,22 @@ import {
   Settings,
   X,
 } from "lucide-vue-next";
+import { useAuthStore } from "@/stores/auth";
 
 defineProps({ open: Boolean });
 defineEmits(["close"]);
 
-const items = [
+const auth = useAuthStore();
+
+const items = computed(() => [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Projects", to: "/projects", icon: FolderKanban },
-  { label: "Tasks", icon: ListChecks, soon: true },
-  { label: "Members", icon: Users, soon: true },
+  { label: "Tasks", to: "/tasks", icon: ListChecks },
+  ...(auth.canCreateProject
+    ? [{ label: "Members", to: "/members", icon: Users }]
+    : []),
   { label: "Settings", to: "/settings", icon: Settings },
-];
+]);
 </script>
 
 <template>
@@ -39,29 +45,17 @@ const items = [
     </div>
 
     <nav class="flex-1 space-y-1 px-3 py-4">
-      <template v-for="item in items" :key="item.label">
-        <div
-          v-if="item.soon"
-          class="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2.5 text-sm opacity-50"
-        >
-          <component :is="item.icon" class="h-5 w-5" />
-          <span class="flex-1">{{ item.label }}</span>
-          <span class="rounded bg-slate-700 px-1.5 py-0.5 text-[10px]"
-            >Segera</span
-          >
-        </div>
-
-        <RouterLink
-          v-else
-          :to="item.to"
-          active-class="bg-slate-800 text-white"
-          class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition hover:bg-slate-800 hover:text-white"
-          @click="$emit('close')"
-        >
-          <component :is="item.icon" class="h-5 w-5" />
-          {{ item.label }}
-        </RouterLink>
-      </template>
+      <RouterLink
+        v-for="item in items"
+        :key="item.label"
+        :to="item.to"
+        active-class="bg-slate-800 text-white"
+        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition hover:bg-slate-800 hover:text-white"
+        @click="$emit('close')"
+      >
+        <component :is="item.icon" class="h-5 w-5" />
+        {{ item.label }}
+      </RouterLink>
     </nav>
   </aside>
 </template>

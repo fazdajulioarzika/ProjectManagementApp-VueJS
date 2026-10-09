@@ -91,3 +91,9 @@ export const commentRules = [
     .isLength({ max: 1000 })
     .withMessage("Komentar maksimal 1000 karakter"),
 ];
+export const roleUpdateRules = [
+  param("id").isMongoId().withMessage("ID user tidak valid"),
+  body("role")
+    .isIn(["admin", "manager", "member"])
+    .withMessage("Role harus salah satu dari: admin, manager, member"),
+];
