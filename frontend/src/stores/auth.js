@@ -34,12 +34,11 @@ export const useAuthStore = defineStore("auth", () => {
     setSession(await authService.register(payload));
   }
 
-  // Dipanggil saat halaman di-refresh: token ada, data user perlu diambil lagi
   async function fetchMe() {
     try {
       user.value = await authService.me();
-    } catch {
-      clearSession();
+    } catch (e) {
+      if (e.response?.status === 401) clearSession();
     }
   }
 

@@ -4,6 +4,9 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import BaseInput from "@/components/ui/BaseInput.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
+import { useSlowHint } from "@/composables/useSlowHint";
+
+const { slow, start, stop } = useSlowHint();
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -21,6 +24,7 @@ async function submit() {
   }
 
   loading.value = true;
+  start();
   try {
     const { name, email, password } = form.value;
     await auth.register({ name, email, password });
@@ -28,6 +32,7 @@ async function submit() {
   } catch (e) {
     error.value = e.message;
   } finally {
+    stop();
     loading.value = false;
   }
 }
@@ -70,6 +75,13 @@ async function submit() {
 
     <p v-if="error" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
       {{ error }}
+    </p>
+    <p
+      v-if="slow"
+      class="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-700"
+    >
+      Server sedang bangun karena lama tidak dipakai. Mohon tunggu sampai 1
+      menit...
     </p>
 
     <BaseButton type="submit" :loading="loading" class="w-full">
