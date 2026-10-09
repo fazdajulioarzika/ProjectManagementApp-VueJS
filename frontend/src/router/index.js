@@ -94,6 +94,11 @@ const routes = [
         name: "notifications",
         component: () => import("@/views/notifications/NotificationsView.vue"),
       },
+      {
+        path: "/analytics",
+        name: "analytics",
+        component: () => import("@/views/analytics/AnalyticsView.vue"),
+      },
     ],
   },
   { path: "/:pathMatch(.*)*", redirect: "/dashboard" },

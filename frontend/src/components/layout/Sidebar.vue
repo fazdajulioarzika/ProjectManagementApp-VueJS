@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   FolderKanban,
   ListChecks,
+  TrendingUp,
   Users,
   Settings,
   X,
@@ -19,6 +20,7 @@ const items = computed(() => [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Projects", to: "/projects", icon: FolderKanban },
   { label: "Tasks", to: "/tasks", icon: ListChecks },
+  { label: "Analytics", to: "/analytics", icon: TrendingUp },
   ...(auth.canCreateProject
     ? [{ label: "Members", to: "/members", icon: Users }]
     : []),
