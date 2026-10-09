@@ -250,6 +250,6 @@ Variabel environment yang dibutuhkan ada di bagian "Menjalankan di Lokal".
 
 ## Penulis
 
-Dibuat oleh **<Fazda Julio Arzika>**
+Dibuat oleh **Fazda Julio Arzika**
 
 [GitHub](https://github.com/fazdajkulioarzika) · [LinkedIn](https://www.linkedin.com/in/fazda-julio-arzika-a35737292/)

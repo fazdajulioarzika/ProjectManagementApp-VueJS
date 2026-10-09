@@ -6,13 +6,13 @@ export const TASK_STATUS = {
 };
 
 export const TASK_PRIORITY = {
-  low: { label: "Low", class: "bg-slate-100 text-slate-600" },
+  low: { label: "Low", class: "bg-gray-100 text-gray-600" },
   medium: { label: "Medium", class: "bg-sky-100 text-sky-700" },
   high: { label: "High", class: "bg-orange-100 text-orange-700" },
   urgent: { label: "Urgent", class: "bg-red-100 text-red-700" },
 };
 export const PROJECT_STATUS = {
-  planning: { label: "Planning", class: "bg-slate-100 text-slate-700" },
+  planning: { label: "Planning", class: "bg-gray-100 text-gray-700" },
   active: { label: "Active", class: "bg-indigo-100 text-indigo-700" },
   completed: { label: "Completed", class: "bg-green-100 text-green-700" },
   archived: { label: "Archived", class: "bg-gray-200 text-gray-600" },

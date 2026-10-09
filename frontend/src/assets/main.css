@@ -1,1 +1,63 @@
 @import "tailwindcss";
+
+/* Membuat varian dark: bekerja dengan class "dark" di <html> (untuk komponen baru nanti) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Palet gelap: menimpa variabel warna Tailwind, jadi komponen lama ikut berubah */
+.dark {
+  color-scheme: dark; /* date picker, dropdown, dan scrollbar ikut gelap */
+
+  /* Skala abu-abu dibalik: 50 = paling gelap, 900 = paling terang */
+  --color-gray-50: #0b1220;
+  --color-gray-100: #172033;
+  --color-gray-200: #263248;
+  --color-gray-300: #384559;
+  --color-gray-400: #6b778c;
+  --color-gray-500: #8d99ad;
+  --color-gray-600: #aab4c5;
+  --color-gray-700: #c9d1de;
+  --color-gray-800: #e2e8f0;
+  --color-gray-900: #f1f5f9;
+
+  /* Warna latar badge dan highlight */
+  --color-indigo-50: #1e1b4b;
+  --color-indigo-100: #2b2a6b;
+  --color-indigo-200: #3730a3;
+  --color-blue-100: #172e52;
+  --color-blue-700: #93c5fd;
+  --color-sky-100: #0c3347;
+  --color-sky-700: #7dd3fc;
+  --color-green-100: #123524;
+  --color-green-700: #86efac;
+  --color-amber-50: #33260a;
+  --color-amber-100: #3a2a0c;
+  --color-amber-700: #fcd34d;
+  --color-orange-100: #3d2210;
+  --color-orange-700: #fdba74;
+  --color-red-50: #3b1219;
+  --color-red-100: #4a1620;
+  --color-purple-100: #2e1f4d;
+  --color-purple-700: #d8b4fe;
+}
+
+/* Warna yang juga dipakai sebagai latar tombol (indigo-600/700, red-600/700),
+   jadi tidak bisa ditimpa lewat variabel. Ditimpa khusus untuk teks. */
+.dark .bg-white {
+  background-color: #111a2b;
+}
+.dark .text-indigo-600 {
+  color: #818cf8;
+}
+.dark .text-indigo-700 {
+  color: #c7d2fe;
+}
+.dark .text-red-600 {
+  color: #f87171;
+}
+.dark .text-red-700 {
+  color: #fca5a5;
+}
+
+.dark body {
+  background-color: var(--color-gray-50);
+}

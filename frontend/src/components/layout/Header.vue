@@ -4,6 +4,7 @@ import { Menu, LogOut } from "lucide-vue-next";
 import { useAuthStore } from "@/stores/auth";
 import UserAvatar from "@/components/ui/UserAvatar.vue";
 import NotificationBell from "./NotificationBell.vue";
+import ThemeToggle from "@/components/ui/ThemeToggle.vue";
 
 defineEmits(["toggle-sidebar"]);
 
@@ -29,6 +30,7 @@ async function logout() {
     <div class="hidden lg:block" />
 
     <div class="flex items-center gap-3">
+      <ThemeToggle />
       <NotificationBell />
       <RouterLink
         to="/profile"
