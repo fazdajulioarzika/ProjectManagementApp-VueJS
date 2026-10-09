@@ -3,8 +3,7 @@ import "dotenv/config";
 import app from "./src/app.js";
 import connectDB from "./src/config/db.js";
 
-// Hanya untuk lokal: pakai DNS publik jika DNS Wi-Fi bermasalah.
-// Di Render variabel ini tidak diisi, jadi baris ini dilewati.
+// Hanya untuk lokal: pakai DNS publik jika DNS Wi-Fi bermasalah
 if (process.env.DNS_SERVERS) {
   dns.setServers(process.env.DNS_SERVERS.split(",").map((s) => s.trim()));
 }
@@ -18,6 +17,11 @@ if (missing.length) {
 
 const PORT = process.env.PORT || 5000;
 
-connectDB().then(() => {
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-});
+connectDB()
+  .then(() =>
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+  )
+  .catch((err) => {
+    console.error("MongoDB error:", err.message);
+    process.exit(1);
+  });

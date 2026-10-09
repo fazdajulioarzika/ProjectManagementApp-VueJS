@@ -11,6 +11,7 @@ import commentRoutes from "./routes/commentRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
+import connectDB from "./config/db.js";
 
 const app = express();
 
@@ -51,6 +52,15 @@ app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
 
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

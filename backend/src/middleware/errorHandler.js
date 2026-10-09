@@ -25,6 +25,11 @@ export const errorHandler = (err, req, res, next) => {
     status = 401;
     message = "Token tidak valid atau sudah kedaluwarsa";
   }
+  if (status === 500) {
+    console.error(err);
+    if (process.env.NODE_ENV === "production")
+      message = "Terjadi kesalahan pada server";
+  }
 
   res.status(status).json({
     success: false,
