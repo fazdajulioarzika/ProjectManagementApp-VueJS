@@ -19,7 +19,7 @@ export const markRead = asyncHandler(async (req, res) => {
   const n = await Notification.findOneAndUpdate(
     { _id: req.params.id, user: req.user._id },
     { read: true },
-    { new: true }
+    { returnDocument: "after" }
   );
   if (!n) throw new AppError("Notifikasi tidak ditemukan", 404);
 

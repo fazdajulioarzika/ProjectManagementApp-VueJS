@@ -28,7 +28,7 @@ export const updateUserRole = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(
     req.params.id,
     { role: req.body.role },
-    { new: true, runValidators: true }
+    { returnDocument: "after", runValidators: true }
   ).select("name email avatar role createdAt");
   if (!user) throw new AppError("User tidak ditemukan", 404);
 

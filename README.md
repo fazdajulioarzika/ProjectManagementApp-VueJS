@@ -235,18 +235,24 @@ Frontend dan backend di-deploy sebagai dua project terpisah di Vercel dari repos
 
 Variabel environment yang dibutuhkan ada di bagian "Menjalankan di Lokal".
 
+## Tes Otomatis
+
+Backend punya 186 tes integrasi (Vitest + Supertest) yang menguji aturan akses per peran,
+alur utama, dan kasus tepi. Tes berjalan di MongoDB in-memory dan tidak menyentuh database aplikasi.
+
+```bash
+cd backend
+npm test
+```
+
 ## Roadmap
 
 - [x] **Phase 1:** autentikasi, dashboard, project dan task CRUD, Kanban dengan drag and drop, assign task, profil
 - [x] **Phase 2:** komentar, manajemen anggota, activity log, search dan filter, notifikasi
-- [ ] Dark mode
-- [ ] Analytics (grafik task per status dan per anggota)
-- [ ] Tampilan kalender berdasarkan deadline
-- [ ] Notifikasi realtime
-- [ ] Lampiran file pada task
-- [ ] Notifikasi email
-- [ ] Hak akses yang lebih detail per project
-- [ ] Tes otomatis
+- [x] Dark mode
+- [x] Analytics (grafik task per status dan per anggota)
+- [x] Tampilan kalender berdasarkan deadline
+- [x] Tes otomatis
 
 ## Penulis
 

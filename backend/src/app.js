@@ -37,7 +37,11 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+app.use(
+  morgan(process.env.NODE_ENV === "production" ? "combined" : "dev", {
+    skip: () => process.env.NODE_ENV === "test",
+  })
+);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
