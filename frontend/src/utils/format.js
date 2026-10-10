@@ -7,10 +7,13 @@ export const formatDate = (date) =>
       })
     : "-";
 
+const startOfTodayUTC = () =>
+  new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`);
+
 export const isOverdue = (task) =>
   !!task.dueDate &&
   task.status !== "done" &&
-  new Date(task.dueDate) < new Date();
+  new Date(task.dueDate) < startOfTodayUTC();
 
 // ISO string -> "YYYY-MM-DD" untuk <input type="date">
 export const toDateInput = (date) => (date ? String(date).slice(0, 10) : "");

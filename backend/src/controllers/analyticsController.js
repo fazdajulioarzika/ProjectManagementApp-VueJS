@@ -3,6 +3,7 @@ import Task from "../models/Task.js";
 import Activity from "../models/Activity.js";
 import AppError from "../utils/AppError.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { startOfTodayUTC } from "../utils/dates.js";
 
 const DAY = 24 * 60 * 60 * 1000;
 const TZ = "Asia/Jakarta"; // zona waktu untuk mengelompokkan tren per hari
@@ -88,7 +89,7 @@ export const getAnalytics = asyncHandler(async (req, res) => {
       Task.countDocuments({
         ...taskMatch,
         status: { $ne: "done" },
-        dueDate: { $lt: new Date() },
+        dueDate: { $lt: startOfTodayUTC() },
       }),
       Activity.aggregate([
         {

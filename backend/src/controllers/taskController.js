@@ -40,17 +40,45 @@ const logStatusChange = (user, task, from) =>
     metadata: { from, to: task.status },
   });
 
-// Semua task dari project yang diikuti user (admin: semua project)
+// Semua task dari project yang diikuti user (admin: semua project).
+// Opsional: ?project=<id>&from=<tanggal>&to=<tanggal> (rentang due date, "to" tidak termasuk)
 export const listTasks = asyncHandler(async (req, res) => {
   const projectFilter =
     req.user.role === "admin"
       ? {}
       : { $or: [{ owner: req.user._id }, { "members.user": req.user._id }] };
-  const projectIds = await Project.distinct("_id", projectFilter);
+  let projectIds = await Project.distinct("_id", projectFilter);
 
-  const tasks = await Task.find({ project: { $in: projectIds } })
+  if (req.query.project) {
+    const selected = projectIds.find(
+      (id) => String(id) === String(req.query.project)
+    );
+    if (!selected)
+      throw new AppError(
+        "Project tidak ditemukan atau tidak dapat diakses",
+        404
+      );
+    projectIds = [selected];
+  }
+
+  const filter = { project: { $in: projectIds } };
+
+  const range = {};
+  for (const [param, op] of [
+    ["from", "$gte"],
+    ["to", "$lt"],
+  ]) {
+    if (!req.query[param]) continue;
+    const date = new Date(String(req.query[param]));
+    if (Number.isNaN(date.getTime()))
+      throw new AppError(`Parameter ${param} tidak valid`, 400);
+    range[op] = date;
+  }
+  if (Object.keys(range).length) filter.dueDate = range;
+
+  const tasks = await Task.find(filter)
     .populate([...POPULATE, { path: "project", select: "name" }])
-    .sort("-updatedAt")
+    .sort(filter.dueDate ? "dueDate" : "-updatedAt")
     .limit(500);
 
   res.json({ success: true, count: tasks.length, data: { tasks } });

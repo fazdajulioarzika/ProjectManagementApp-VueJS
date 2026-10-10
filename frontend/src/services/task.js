@@ -14,5 +14,6 @@ export default {
   updateStatus: (id, status) =>
     api.patch(`/tasks/${id}/status`, { status }).then((r) => r.data.data.task),
   remove: (id) => api.delete(`/tasks/${id}`),
-  listAll: () => api.get("/tasks").then((r) => r.data.data.tasks),
+  listAll: (params) =>
+    api.get("/tasks", { params }).then((r) => r.data.data.tasks),
 };

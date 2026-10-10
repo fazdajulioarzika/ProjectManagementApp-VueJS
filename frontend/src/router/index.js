@@ -99,6 +99,11 @@ const routes = [
         name: "analytics",
         component: () => import("@/views/analytics/AnalyticsView.vue"),
       },
+      {
+        path: "/calendar",
+        name: "calendar",
+        component: () => import("@/views/calendar/CalendarView.vue"),
+      },
     ],
   },
   { path: "/:pathMatch(.*)*", redirect: "/dashboard" },

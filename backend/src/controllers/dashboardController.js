@@ -2,6 +2,7 @@ import Project from "../models/Project.js";
 import Task from "../models/Task.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { getProgressMap } from "../services/projectService.js";
+import { startOfTodayUTC } from "../utils/dates.js";
 
 export const getDashboard = asyncHandler(async (req, res) => {
   // admin melihat semua, user lain hanya project yang diikuti
@@ -27,7 +28,7 @@ export const getDashboard = asyncHandler(async (req, res) => {
       Task.countDocuments({
         ...taskFilter,
         status: { $ne: "done" },
-        dueDate: { $lt: new Date() },
+        dueDate: { $lt: startOfTodayUTC() },
       }),
       Task.find(taskFilter)
         .sort("-updatedAt")
